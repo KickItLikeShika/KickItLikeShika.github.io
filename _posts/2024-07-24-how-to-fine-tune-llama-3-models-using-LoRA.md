@@ -334,6 +334,8 @@ model.push_to_hub(f"{username}/{repo_name}", tokenizer=tokenizer, max_shard_size
 tokenizer.push_to_hub(f"{username}/{repo_name}", private=True)
 ```
 
+---
+
 ## Evaluation
 
 In a separate notebook, we can load our trained model and tokenizer from HF hub, and use them for inference
