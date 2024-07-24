@@ -1,12 +1,7 @@
 # Fine-tuning Llama3.1 8B using HF and LoRA
+
+Meta just released Llama3.1 models Yesterday (23rd of July, 2024), in this blog, we will fine-tune the 8B model using Hugging Face (HF) and Low-Rank Adaptation (LoRA), to enhace its performance on particular tasks/datasets.
 ---
-title: " How to Fine-tune Llama3.1 8B using HF and LoRA"
-date: 2024-07-24
-draft: false
-description: "How to fine-tune Llama3.1 8B using HuggingFace and Low Rank Adaptation of Large Language Models"
-summary: "How to fine-tune Llama3.1 8B using HuggingFace and Low Rank Adaptation of Large Language Models"
-toc: true
-readTime: true
-autonumber: true
-math: true
----
+
+## Low-Rank Adaptation (LoRA)
+
