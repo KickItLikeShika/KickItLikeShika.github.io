@@ -8,7 +8,7 @@ Meta just released Llama3.1 models yesterday (23rd of July, 2024), so I thought 
   - Example
 - Setting up the Environment
 - Data Preparation
--  Fine-tuning
+- Fine-tuning
   - Seeding
   - Load and Quantize Model
   - Add Padding Token
