@@ -20,8 +20,6 @@ linkedin_username: "ahmed-khaled-952738193"
 #########################################################################################
 theme: "minima"
 
-rss: rss
-
 kramdown:
   syntax_highlighter_opts:
     disable: true
