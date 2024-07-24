@@ -1,6 +1,6 @@
-# Fine-tuning Llama3 Models using LoRA on Custom Data
+# Fine-tuning Llama3 Models with LoRA on Custom Data
 
-Meta just released Llama3.1 models yesterday (23rd of July, 2024), so I thought it would be a great time to discuss how we can fine-tune Llama 3 models. In this blog, we will fine-tune the Llama3 8B model using Low-Rank Adaptation (LoRA), to enhance its performance on particular tasks/datasets.
+Meta just released Llama3.1 models yesterday (23rd of July, 2024), so I thought it would be a great time to discuss how we can fine-tune Llama 3 models. In this blog, we will fine-tune the Llama3 8B model with Low-Rank Adaptation (LoRA), to enhance its performance on particular tasks/datasets.
 
 **Table of Contents**
 - Low-Rank Adaptation (LoRA)
