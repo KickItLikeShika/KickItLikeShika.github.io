@@ -1,5 +1,7 @@
-Hi! I am an engineer and researcher working in AI & Machine Learning. Currently, I am a Senior Data Scientist at Cision (following the acquistion of Factmata), working on building & conducting AI & ML research focused on Large Scale Machine Learning Models and LLMs.
+Hi! I'm Ahmed Khaled, an engineer and researcher specializing in AI and Machine Learning. I'm currently a Senior Data Scientist at Cision, following their acquisition of Factmata, where I focus on building and conducting research on Large Scale Machine Learning Models and LLMs.
 
-I have 4 years of experience working in the industry. Prior to Factmata, I worked at PyTorch, where I maintained PyTorch-Ignite library for 8 months.
+I have four years of industry experience. Before joining Factmata, I worked at PyTorch, where I maintained the PyTorch-Ignite library for +8 months.
 
-I usually join Kaggle NLP competitons, and I won a couple of medals before. Currently looking for opportunitues where I can connect with people to work on research projects focused on Large Scale Deep Learning and Generative AI.
+In my spare time, I participate in Kaggle NLP competitions and have won several medals. 
+
+I'm always looking to connect with others to collaborate on research projects focused on Large Scale Deep Learning and Generative AI. If you would like to collaborate, please reach out!
