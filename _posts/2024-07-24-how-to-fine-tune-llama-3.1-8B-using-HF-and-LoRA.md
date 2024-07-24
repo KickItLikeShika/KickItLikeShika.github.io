@@ -3,11 +3,11 @@
 Meta just released Llama3.1 models Yesterday (23rd of July, 2024), in this blog, we will fine-tune the 8B model using Hugging Face (HF) and Low-Rank Adaptation (LoRA), to enhace its performance on particular tasks/datasets.
 
 **Table of Contents**
-- [Low-Rank Adaptation (LoRA)](##Low-Rank-Adaptation-(LoRA))
-  - [Concept](###Concept)
-  - [Example](###Example)
-- [Setting up Environment](##Setting-up-Environment)
-- [Preparing Data](##Preparing-Data)
+- [Low-Rank Adaptation (LoRA)](#Low-Rank-Adaptation-(LoRA))
+  - [Concept](#Concept)
+  - [Example](#Example)
+- [Setting up Environment](#Setting-up-Environment)
+- [Preparing Data](#Preparing-Data)
 
 ---
 
