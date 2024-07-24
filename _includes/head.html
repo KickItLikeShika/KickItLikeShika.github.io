@@ -32,7 +32,6 @@
 
   <script type="text/javascript"> hljs.highlightAll(); </script>
 
-  {% if jekyll.environment == 'production' -%}
   <!-- dark theme using DarkReader -->
   <script src="//unpkg.com/darkreader@4.9.40/darkreader.js"></script>
   <script type="text/javascript">
@@ -40,7 +39,6 @@
     //DarkReader.enable();
     DarkReader.auto( {brightness: 100, contrast: 90, sepia: 10} );
   </script>
-  {%- endif %}
 
   <!-- end highlight.js support -->
 </head>
