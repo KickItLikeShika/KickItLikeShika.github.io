@@ -1,13 +1,25 @@
-# Fine-tuning Llama3.1 8B using HF and LoRA on Custom Data
+# Fine-tuning Llama3 8B Models using HF and LoRA on Custom Data
 
-Meta just released Llama3.1 models Yesterday (23rd of July, 2024), in this blog, we will fine-tune the 8B model using Hugging Face (HF) and Low-Rank Adaptation (LoRA), to enhace its performance on particular tasks/datasets.
+Meta just released Llama3.1 models Yesterday (23rd of July, 2024), in this blog, we will fine-tune the Llama8B model using Hugging Face (HF) and Low-Rank Adaptation (LoRA), to enhace its performance on particular tasks/datasets.
 
 **Table of Contents**
-- [Low-Rank Adaptation (LoRA)](#Low-Rank-Adaptation-(LoRA))
-  - [Concept](#Concept)
-  - [Example](#Example)
-- [Setting up Environment](#Setting-up-Environment)
-- [Preparing Data](#Preparing-Data)
+- Low-Rank Adaptation (LoRA)
+  - Concept
+  - Example
+- Setting up Environment
+- Data Preparation
+-  Fine-tuning
+  - Seeding
+  - Load and Quantize Model
+  - Add Padding Token
+  - Format Training Examples
+  - Prepare Training Datasets
+  - Use LoRA
+  - Training Configs
+  - Start Training
+- Loading and Merging Saved Model
+- Pushing Trained Model to HF Hub
+- Evaluation
 
 ---
 
@@ -48,5 +60,334 @@ You will have to sign-in to HuggingFace Hub, and request access to [Llama 3.1 8B
 
 ---
 
-## Preparing-Data
-placeholder
+## Data Preparation
+
+As the main goal of this blog post is to train the model on your own custom dataset, we will be talking abstrcatly about how to train the model on any datasets, and how the data should be formatted.
+
+First, let's have two main columns in the dataset:
+```
+question: <this is the prompt, and this is what the model will be trained on>
+answer: <this is the answer to the prompt/question, this is the label>
+```
+
+It's **not** recommended to do any normalization/cleaning on your text, it's preferred to leave text as is when training LLM.
+
+---
+
+## Fine-tuning
+
+**1. Seeding**
+
+To ensure reproduceability, we will need to set seeds
+```py
+import random
+import numpy as np
+import torch
+
+def seed_everything(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
+seed_everything(0)
+```
+
+**2. Load and Quantize Model**
+
+The 8B model is still quite big to fix on average Colab GPUs (e.g T4), so It's recommened to quantize the model to lower precision rate before start training.
+And this is how we can load and quantize the model using BitsAndBytes to 8-Bit
+
+This will reduce GPU utilization from 18GB to approximately 6GB.
+```py
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    BitsAndBytesConfig
+)
+
+quantization_config = BitsAndBytesConfig(
+    load_in_4bit=True, bnb_4bit_quant_type='nf4', bnb_4bit_compute_dtype=torch.bfloat16
+)
+
+tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3.1-8B-Instruct", use_fast=True)
+
+model = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Meta-Llama-3.1-8B-Instruct", 
+    quantization_config=quantization_config,
+    device_map="auto"
+)
+```
+
+**3. Add Padding Token**
+
+Llama 3 tokenizers do not have a `padding` token by default, in order to train the model on batches, we will need to configure this ourselves, and also proved to show better results while training on a batch of 1 sample.
+```py
+PAD_TOKEN = "<|pad|>"
+
+tokenizer.add_special_tokens({"pad_token": PAD_TOKEN})
+tokenizer.padding_side = "right"
+
+# we added a new padding token to the tokenizer, we have to extend the embddings
+model.resize_token_embeddings(len(tokenizer), pad_to_multiple_of=8)
+
+print(tokenizer.pad_token, tokenizer.pad_token_id)
+# output: ('<|pad|>', 128256)
+```
+
+**4. Format Training Examples**
+
+We have to format our all of training examples properly, I have my custom data in `pandas` dataframe with 2 columns `question` and `answer`, and this is how we can format them
+```py
+from textwrap import dedent
+
+def format_example(row: dict):
+    prompt = dedent(
+        f"""
+        {row['question']}
+        """
+    )
+    messages = [
+        # the system prompt is very important to adjust the control the behavior of the model, make sure to use properly accoring to your task
+        {"role": "system", "content": "You're a document classifier, try to classify the given document as relevant or irrelevant"},
+        {"role": "user", "content": prompt},
+        {"role": "assistant", "content": row['answer']}
+    ]
+    return tokenizer.apply_chat_template(messages, tokenize=False)
+
+# format the training examples into a new text column
+df['text'] = df.apply(format_example, axis=1)
+```
+
+**5. Prepare Training Datasets**
+
+First, we need to create our train, validation and test splits to evaluate the model during training, and test it afterwards
+```py
+from sklearn.model_selection import train_test_split
+
+train, test = train_test_split(df, test_size=0.2, random_state=1)
+val, test = train_test_split(temp, test_size=0.2, random_state=1)
+
+# save training-ready data to JSON
+train.to_json("train.json", orient='records', lines=True)
+val.to_json("val.json", orient='records', lines=True)
+test.to_json("test.json", orient='records', lines=True)
+```
+
+Second, create HF datasets
+```py
+from datasets import load_dataset
+
+dataset = load_dataset(
+    "json",
+    data_files={'train': 'train.json', 'validation': 'val.json', 'test': 'test.json'}
+)
+
+# print a training exmaple
+print(dataset['train'][0]['text'])
+```
+
+Third, create the training-ready datesets
+```py
+from trl import DataCollatorForCompletionOnlyLM
+
+# in order to only evaluate the generation of the model, we shouldn't consider the text that were already inputed, we will use the end header id token to get the generated text only, and mask everything else
+response_template = "<|end_header_id|>"
+collator = DataCollatorForCompletionOnlyLM(response_template, tokenizer=tokenizer)
+```
+
+**6. Use LoRA**
+
+Use LoRA to reduce the number of trainable parameters, you can print the model modules by `print(model)`, can you can see the names the names of the modules are targetting here.
+```py
+from peft import (
+    LoraConfig,
+    TaskType,
+    get_peft_model,
+    prepare_model_for_kbit_training
+)
+
+# this is recommended by original lora paper: using lora, we should target the linear layers only
+lora_config = LoraConfig(
+    r=32,  # rank for matrix decomposition
+    lora_alpha=16,
+    target_modules=[
+        "self_attn.q_proj",
+        "self_attn.k_proj",
+        "self_attn.v_proj",
+        "self_attn.o_proj",
+        "mlp.gate_proj",
+        "mlp.up_proj",
+        "mlp.down_proj"
+    ],
+    lora_dropout=0.05,
+    bias='none',
+    task_type=TaskType.CAUSAL_LM
+)
+
+model = prepare_model_for_kbit_training(model)
+model = get_peft_model(model, lora_config)
+
+pirnt(model.print_trainable_parameters())
+# output: trainable params: 83,886,080 || all params: 8,114,212,864 || trainable%: 1.0338
+```
+
+**7. Training Configs**
+
+Setting training configurations
+```py
+from trl import SFTConfig, SFTTrainer
+
+OUTPUT_DIR = "experiments"
+
+sft_config = SFTConfig(
+    output_dir=OUTPUT_DIR,
+    dataset_text_field='text',  # this is the final text example we formatted
+    max_seq_length=4096,
+    num_train_epochs=1,
+    per_device_train_batch_size=2,  # training batch size
+    per_device_eval_batch_size=2,  # eval batch size
+    gradient_accumulation_steps=4,  # by using gradient accum, we updating weights every: batch_size * gradient_accum_steps = 4 * 2 = 8 steps
+    optim="paged_adamw_8bit",  # paged adamw
+    eval_strategy='steps',
+    eval_steps=0.2,  # evalaute every 20% of the trainig steps
+    save_steps=0.2,  # save every 20% of the trainig steps
+    logging_steps=10,
+    learning_rate=1e-4,
+    fp16=True,  # also try bf16=True
+    save_strategy='steps',
+    warmup_ratio=0.1,  # learning rate warmup
+    save_total_limit=2,
+    lr_scheduler_type="cosine",  # scheduler
+    save_safetensors=True,  # saving to safetensors
+    dataset_kwargs={
+        "add_special_tokens": False,  # we template with special tokens already
+        "append_concat_token": False,  # no need to add additional sep token
+    },
+    seed=1
+)
+
+trainer = SFTTrainer(
+    model=model,
+    args=sft_config,
+    train_dataset=dataset['train'],
+    eval_dataset=dataset['validation'],
+    tokenizer=tokenizer,
+    data_collator=collator,
+)
+```
+
+**7. Start Training**
+
+Now, we are finally ready to start training
+```py
+trainer.train()
+```
+We can see how the training is going well, and the validation loss is going down
+<img width="578" alt="Screenshot 2024-07-24 at 10 21 14 PM" src="https://github.com/user-attachments/assets/e31aa6a6-5dac-4ea6-b982-a7f7a1fffe86">
+
+---
+
+## Loading and Merging Saved Model
+
+Models are being saved during training, but while training with LoRA, the model will be saved with an Adapter, wo we will load both the model and the Adapter, merge them, and have a final saved model we can easily push to HF Hub
+```py
+from peft import PeftModel
+
+NEW_MODEL="path_to_saved_model"
+
+# load trained/resized tokenizer
+tokenizer = AutoTokenizer.from_pretrained(NEW_MODEL)
+
+model = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Meta-Llama-3.1-8B-Instruct",
+    torch_dtype=torch.float16,
+    device_map='auto',
+)
+
+model.resize_token_embeddings(len(tokenizer), pad_to_multiple_of=8)
+model = PeftModel.from_pretrained(model, NEW_MODEL)
+model = model.merge_and_unload()
+```
+
+---
+
+## Pushing Trained Model to HF Hub
+
+Now we have merged the model and the adapter, we can push the model to HF Hub and load it from there
+
+**1. Sign-in to HF Hub using HF-cli**
+
+Sign-in, and make sure to create a token with write access, check [HF Docs](https://huggingface.co/docs/transformers/en/model_sharing) for more info
+```console
+huggingface-cli login
+```
+
+**2. Push Model and Tokenizer**
+```py
+username = "your_username"
+repo_name = "repo_name"
+model.push_to_hub(f"{username}/{repo_name}", tokenizer=tokenizer, max_shard_size="5GB", private=True)
+tokenizer.push_to_hub(f"{username}/{repo_name}", private=True)
+```
+
+## Evaluation
+
+In a separate notebook, we can load our trained model and tokenizer from HF hub, and use them for inference
+```py
+from textwrap import dedent
+import pandas as pd
+import torch
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    BitsAndBytesConfig,
+    pipeline
+)
+
+MODEL_NAME = "your_repo_name"
+
+# this should create
+df = pd.read_csv('data.csv')
+
+quantization_config = BitsAndBytesConfig(
+    load_in_4bit=True, bnb_4bit_quant_type='nf4', bnb_4bit_compute_dtype=torch.bfloat16
+)
+
+# load trained model
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_fast=True)
+
+model = AutoModelForCausalLM.from_pretrained(
+    MODEL_NAME, 
+    quantization_config=quantization_config,
+    device_map="auto"
+)
+
+pipe = pipeline(
+    task='text-generation',
+    model=model,
+    tokenizer=tokenizer,
+    max_new_tokens=128,
+    return_full_text=False
+)
+
+
+def creaet_test_prompt(row):
+    prompt = dedent(
+        f"""
+        {row['question']}
+        """
+    )
+    messages = [
+        # the system prompt is very important to adjust the control the behavior of the model, make sure to use properly accoring to your task
+        {"role": "system", "content": "You're a document classifier, try to classify the given document as relevant or irrelevant"},
+        {"role": "user", "content": prompt},
+    ]
+    return tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+
+
+questions = df['question'].tolist()
+prompt = creaet_test_prompt(questions[0])
+result = pipe(prompt)[0]['generated_text']
+print(result)
+# output: <model's response>
+```
