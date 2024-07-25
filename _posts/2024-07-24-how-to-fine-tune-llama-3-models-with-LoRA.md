@@ -302,6 +302,8 @@ NEW_MODEL="path_to_saved_model"
 # load trained/resized tokenizer
 tokenizer = AutoTokenizer.from_pretrained(NEW_MODEL)
 
+# here we are loading the raw model, if you can't load it on your GPU, you can just change device_map to cpu
+# we won't need gpu here anyway
 model = AutoModelForCausalLM.from_pretrained(
     "meta-llama/Meta-Llama-3-8B-Instruct",
     torch_dtype=torch.float16,
