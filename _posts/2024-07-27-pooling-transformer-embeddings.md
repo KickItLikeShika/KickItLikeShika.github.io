@@ -270,7 +270,7 @@ This technique showed great performance in several Kaggle NLP competition.
 ```py
 last_hidden_state = outputs[1]
 
-# defining attentino pooling
+# defining attention pooling
 attention_pooling = nn.Sequential(
     nn.Linear(768, 512),            
     nn.Tanh(),                       
