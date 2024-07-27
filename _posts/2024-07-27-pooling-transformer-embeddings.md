@@ -18,7 +18,7 @@ This often underappreciated aspect is crucial for building very strong classifie
   - LSTM Pooling
   - Weighted Layer Pooling
   - Attention Pooling
-- Takeaways
+- Build Your Pooling Strategy
 
 ---
 
@@ -284,4 +284,9 @@ context_vector = torch.sum(weights * last_hidden_state, dim=1)
 logits = nn.Linear(config.hidden_size, 1)(context_vector)
 ```
 
-## Takeaways
+## Build Your Pooling Strategy
+Creating an effective pooling strategy often involves combining different techniques or layers to maximize performance for your specific task. 
+Here are some ways you can build and customize your pooling strategy:
+- Combine CLS Pooling and Mean Pooling: Perform CLS Pooling to capture the contextual information from the first token and Mean Pooling to aggregate information from all tokens. Concatenating the outputs of both techniques can provide a richer representation.
+- Concatenate Different Layers: Experiment with concatenating outputs from different layers of the transformer. For instance, concatenate the last four layers, as suggested by some studies, or try different combinations like the middle layers that capture syntactic information and higher layers for semantic features.
+- Experiment and Iterate: Don’t hesitate to experiment with different pooling strategies and iterate based on performance.
