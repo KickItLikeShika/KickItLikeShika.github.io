@@ -10,6 +10,8 @@
 6. [Future Work](#future-work)
 7. [Conclusion](#conclusion)
 
+Research Digger: https://github.com/KickItLikeShika/research-digger
+
 ## Introduction
 Welcome to the official blog post for Research Digger, an intelligent tool designed to streamline the process of academic research. In this post, we will explore the motivation behind creating Research Digger, the technical details of how we built it, and the innovative concept of chain of thought prompting that powers it. We will also provide a comprehensive guide on how to use the tool and discuss future enhancements.
 
