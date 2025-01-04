@@ -14,7 +14,9 @@
     1. [Function Qualifiers](#function-qualifiers)
     2. [Memory Management](#memory-management)
 4. [Practical Example: Vector Addition](#practical-example-vector-addition)
-5. [Conclusion](#conclusion)
+5. [Important Performance Note](#important-performance-note)
+6. [Conclusion](#conclusion)
+
 
 ## Introduction
 CUDA is an extension of C/C++ that enables parallel programming on NVIDIA GPUs. While it might seem daunting at first, CUDA builds upon familiar C concepts while adding parallel computing capabilities. This guide will walk you through the essential differences and practical basics.
@@ -335,21 +337,21 @@ nvcc vector_add.cu -o vector_add
 Note that, given this is a problem with very little data, it's actually expected to be slower than a CPU program, as the overhead from moving the data back and forth between host and device is more significant than the actual computation time. This illustrates an important principle in CUDA programming: parallelization isn't always beneficial for small datasets.
 
 When to use CUDA:
-    1. Large datasets where parallel processing benefits outweigh transfer costs
-    2. Computationally intensive tasks
-    3. Tasks that can be efficiently parallelized
+1. Large datasets where parallel processing benefits outweigh transfer costs
+2. Computationally intensive tasks
+3. Tasks that can be efficiently parallelized
 
 When CPU might be better:
-    1. Small datasets (like our example with just 4 elements)
-    2. Tasks with heavy data transfer requirements but light computation
-    3. Sequential algorithms that can't be effectively parallelized
+1. Small datasets (like our example with just 4 elements)
+2. Tasks with heavy data transfer requirements but light computation
+3. Sequential algorithms that can't be effectively parallelized
 
 The general rule of thumb is that the computational intensity (amount of computation per byte of data transferred) should be high enough to justify the overhead of:
-    1. Allocating GPU memory
-    2. Transferring data to GPU
-    3. Launching kernel
-    4. Transferring results back
-    5. Freeing GPU memory
+1. Allocating GPU memory
+2. Transferring data to GPU
+3. Launching kernel
+4. Transferring results back
+5. Freeing GPU memory
 
 ---
 
