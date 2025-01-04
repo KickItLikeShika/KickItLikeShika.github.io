@@ -3,6 +3,18 @@
 
 ## Table of Contents
 1. [Introduction](#introduction)
+2. [CUDA vs C: Key Differences](#cuda-vs-c-key-differences)
+    1. [Understanding Threads, Blocks, and Grids](#understanding-threads-blocks-and-grids)
+        1. [Threads](#threads)
+        2. [Blocks](#blocks)
+        3. [Grid](#grid)
+    2. [Thread Organization and Indexing](#thread-organization-and-indexing)
+    3. [Choosing Block and Grid Dimensions](#choosing-block-and-grid-dimensions)
+3. [Essential CUDA Keywords](#essential-cuda-keywords)
+    1. [Function Qualifiers](#function-qualifiers)
+    2. [Memory Management](#memory-management)
+4. [Practical Example: Vector Addition](#practical-example-vector-addition)
+5. [Conclusion](#conclusion)
 
 ## Introduction
 CUDA is an extension of C/C++ that enables parallel programming on NVIDIA GPUs. While it might seem daunting at first, CUDA builds upon familiar C concepts while adding parallel computing capabilities. This guide will walk you through the essential differences and practical basics.
@@ -40,8 +52,6 @@ CUDA's execution model is hierarchical, organized into three levels:
     - threadIdx.x: Index in x dimension
     - threadIdx.y: Index in y dimension (if using 2D blocks)
     - threadIdx.z: Index in z dimension (if using 3D blocks)
-
-
 
 #### Blocks
 - Groups of threads that can cooperate
