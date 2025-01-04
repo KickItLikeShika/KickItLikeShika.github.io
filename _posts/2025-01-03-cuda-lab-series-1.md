@@ -1,4 +1,4 @@
-# CUDA Lab Series 1: Parallel Computing and CUDA
+# CUDA Lab Series 1 - Parallel Computing and CUDA
 
 
 ## Table of Contents
