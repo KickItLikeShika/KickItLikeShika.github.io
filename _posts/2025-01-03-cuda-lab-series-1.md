@@ -6,7 +6,7 @@
 2. [Sequential vs. Parallel Computing](#sequential-vs.-parallel-computing)
     1. [Sequential Computing](#sequential-computing)
     2. [Parallel Computing](#parallel-computing)
-3. [CPU vs. GPU: Architectural Differences](#cpu-vs.-gpu:-architectural-differences)
+3. [CPU vs. GPU: Architectural Differences](#cpu-vs.-gpu-architectural-differences)
     1. [CPU Architecture](#cpu-architecture)
     1. [GPU Architecture](#gpu-architecture)
 4. [The Birth of CUDA](#the-birth-of-cuda)
