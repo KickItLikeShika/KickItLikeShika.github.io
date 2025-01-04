@@ -21,6 +21,8 @@
 ## Introduction
 CUDA is an extension of C/C++ that enables parallel programming on NVIDIA GPUs. While it might seem daunting at first, CUDA builds upon familiar C concepts while adding parallel computing capabilities. This guide will walk you through the essential differences and practical basics.
 
+Code can be found here: https://github.com/KickItLikeShika/cuda-lab
+
 ---
 
 ## CUDA vs C: Key Differences
