@@ -274,12 +274,8 @@ Let's break down our vector addition example to understand each component:
             cudaMemcpy(a_d, a_h, size, cudaMemcpyHostToDevice);
             cudaMemcpy(b_d, b_h, size, cudaMemcpyHostToDevice);
 
-            // Calculate grid dimensions
-            int threadsPerBlock = 256;
-            int blocksPerGrid = ceil(n / (float)threadsPerBlock);
-
             // Launch kernel
-            vecAddKernel<<<blocksPerGrid, threadsPerBlock>>>(a_d, b_d, c_d, n);
+            vecAddKernel<<<ceil(n/256.0), 256>>>(a_d, b_d, c_d, n);
 
             // Copy result back to CPU
             cudaMemcpy(c_h, c_d, size, cudaMemcpyDeviceToHost);
