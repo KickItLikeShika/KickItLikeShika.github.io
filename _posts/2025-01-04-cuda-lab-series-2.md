@@ -254,9 +254,10 @@ Let's break down our vector addition example to understand each component:
         }
     }
     ```
-    - Uses __global__ to indicate it's a CUDA Kernel that runs on the GPU
+    - Uses `__global__` to indicate it's a CUDA Kernel that runs on the GPU
     - Calculates unique index for each thread
     - Includes bounds check for last block
+      
 
 2. 
     ```cu
@@ -296,6 +297,7 @@ Let's break down our vector addition example to understand each component:
     - Launches kernel with <<<>>> syntax
     - Retrieves results and cleans up
 
+
 3. 
     ```cu
         int main() {
@@ -315,6 +317,7 @@ Let's break down our vector addition example to understand each component:
         }
     ```
     - Main function to run the program
+
 
 To compile and run:
 ```bash
