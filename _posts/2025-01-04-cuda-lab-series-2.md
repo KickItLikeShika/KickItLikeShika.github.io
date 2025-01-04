@@ -65,30 +65,31 @@ float a[4] = {1, 2, 3, 4};
 ```
 
 1. `cudaMalloc()`: Allocate memory 
-```cu
-// CUDA allocation
-float* device_array;
-
-// The number of bytes to allocate, typically calculated using sizeof() * number_of_elements
-int size = n * sizeof(float)
-
-cudaMalloc((void **) &device_array, size);
-```
-
-For the last line, CUDA requires a `void **` for the first argument of `cudaMalloc`, The cast `(void **)` tells the compiler to treat the address of `device_array` (a `float **`) as a `void **`. This casting is necessary because `cudaMalloc` is a generic function that works with all types of pointers. It expects a `void **` to accommodate any pointer type.
+    ```cu
+    // CUDA allocation
+    float* device_array;
+    
+    // The number of bytes to allocate, typically calculated using sizeof() * number_of_elements
+    int size = n * sizeof(float)
+    
+    cudaMalloc((void **) &device_array, size);
+    ```
+    
+    For the last line, CUDA requires a `void **` for the first argument of `cudaMalloc`, The cast `(void **)` tells the compiler to treat the address of `device_array` (a `float **`) as a `void **`. This casting is necessary because `cudaMalloc` is a generic function that works with all types of pointers. It expects a `void **` to accommodate any pointer type.
 
 2. `cudaMemcpy()`: Copy memory
-```cu
-// move vectors from cpu/host to gpu/device
-cudaMemcpy(device_array, a, size, cudaMemcpyHostToDevice);
-```
-The code above means moving `device_array` from Host (CPU) to Device (GPU), where it exist in the place we have allocated in previous step.
-`cudaMemcpyHostToDevice` is a symbolic constant predefined in CUDA, and also there is `cudaMemcpyDeviceToHost`, to move data from Device to Host.
+    ```cu
+    // move vectors from cpu/host to gpu/device
+    cudaMemcpy(device_array, a, size, cudaMemcpyHostToDevice);
+    ```
+    
+    The code above means moving `device_array` from Host (CPU) to Device (GPU), where it exist in the place we have allocated in previous step.
+    `cudaMemcpyHostToDevice` is a symbolic constant predefined in CUDA, and also there is `cudaMemcpyDeviceToHost`, to move data from Device to Host.
 
 3. `cudaFree()`: Free device memory
-```cu
-cudaFree(device_array);
-```
+    ```cu
+    cudaFree(device_array);
+    ```
 
 ---
 
