@@ -19,6 +19,8 @@
 
 ---
 
+![Agentic Memory System](agentic-memory-ss.png)
+
 ## Introduction
 
 Current AI systems, particularly those built around Large Language Models (LLMs), face a fundamental limitation: they lack true memory. While they can process information provided in their immediate context, they cannot naturally accumulate experiences over time. This creates several problems:
