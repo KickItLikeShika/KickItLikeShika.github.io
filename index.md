@@ -1,6 +1,6 @@
 Hi! I'm Ahmed Khaled, an engineer and researcher specializing in AI, Machine Learning and Natural Language Processing. I'm currently a Senior Data Scientist at Cision, following their acquisition of Factmata. where I focus on building and conducting research on Large Scale Machine Learning Models and LLMs.
 
-Also, I'm an OS ML Researcher in [Manifold Research Group](https://www.manifoldrg.com/), working on Multi-Modal Research Projects.
+Also, I'm an Computer Science Master studnet in [Georiga Tech](https://www.gatech.edu/).
 
 I have four years of industry experience. Before joining Factmata, I worked at PyTorch, where I maintained the PyTorch-Ignite library for +8 months.
 
