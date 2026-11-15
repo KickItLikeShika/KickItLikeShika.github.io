@@ -1,3 +1,7 @@
+---
+description: "Threads, blocks and grids, and how CUDA differs from C."
+tag: cuda
+---
 # CUDA Lab Series 2 - Getting Started with CUDA: A Practical Guide
 
 

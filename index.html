@@ -1,0 +1,38 @@
+---
+layout: default
+---
+<section class="intro" aria-label="About me">
+  <div class="intro-main">
+    <h1>{{ site.author }}</h1>
+    <p class="role">Researcher · MSc at Georgia Tech</p>
+    <p class="bio">I work on large language models and machine learning research. My focus is post-training: reinforcement learning, alignment, and editing model weights directly. These are my notes on what I build and test.</p>
+  </div>
+  <div class="elsewhere">
+    <p class="label">Elsewhere</p>
+    <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+    <a href="https://github.com/{{ site.github_username }}">github / {{ site.github_username }}</a>
+    <a href="https://www.linkedin.com/in/{{ site.linkedin_username }}">linkedin / ahmed-k-khamis</a>
+    <a href="https://x.com/{{ site.twitter_username }}">x / {{ site.twitter_username }}</a>
+  </div>
+</section>
+
+<section class="writing" aria-label="Writing">
+  <h2>Writing</h2>
+  {% assign years = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
+  {% for year in years %}
+  <div class="year">
+    <p class="year-label">{{ year.name }}</p>
+    <ol class="post-list">
+      {% for post in year.items %}
+      <li>
+        <a href="{{ post.url | relative_url }}">
+          <span class="title">{{ post.title }}</span>
+          {% if post.description %}<span class="desc">{{ post.description }}</span>{% endif %}
+        </a>
+        <span class="meta">{{ post.date | date: "%b %d" }}{% if post.tag %} · {{ post.tag }}{% endif %}</span>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+  {% endfor %}
+</section>

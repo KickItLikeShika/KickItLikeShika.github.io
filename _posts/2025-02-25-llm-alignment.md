@@ -1,3 +1,7 @@
+---
+description: "Classic alignment against Odds Ratio Preference Optimization."
+tag: alignment
+---
 #  LLM Alignment: SFT, RL, and ORPO
 
 ## Table of Contents

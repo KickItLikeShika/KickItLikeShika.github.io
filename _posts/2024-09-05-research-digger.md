@@ -1,3 +1,7 @@
+---
+description: "Fetching, analysing and summarising papers with chain-of-thought prompts."
+tag: tools
+---
 # Research Digger: Streamlining Academic Research with AI
 
 ## Table of Contents

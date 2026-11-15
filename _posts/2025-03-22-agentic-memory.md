@@ -1,3 +1,7 @@
+---
+description: "Why agents forget, and four kinds of memory that help."
+tag: agents
+---
 # LLM Agentic Memory Systems
 
 ## Table of Contents
@@ -19,7 +23,7 @@
 
 ---
 
-![Agentic Memory System](agentic-memory-ss.png)
+![Agentic Memory System](/assets/images/agentic-memory-ss.png)
 
 ## Introduction
 

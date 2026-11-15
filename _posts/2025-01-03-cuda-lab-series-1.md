@@ -1,3 +1,7 @@
+---
+description: "Sequential against parallel, CPU against GPU."
+tag: cuda
+---
 # CUDA Lab Series 1 - Parallel Computing and CUDA
 
 
