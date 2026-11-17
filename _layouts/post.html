@@ -17,6 +17,6 @@ layout: default
 
   <nav class="post-nav" aria-label="More writing">
     {% if page.previous %}<a class="prev" href="{{ page.previous.url | relative_url }}"><span>Previous</span>{{ page.previous.title }}</a>{% endif %}
-    {% if page.next %}<a class="next" href="{{ page.next.url | relative_url }}"><span>Next</span>{{ page.next.title }}</a>{% endif %}
+    {% if page.next %}<a class="next" href="{% if page.next.external_url %}{{ page.next.external_url }}{% else %}{{ page.next.url | relative_url }}{% endif %}"><span>Next</span>{{ page.next.title }}</a>{% endif %}
   </nav>
 </article>
